@@ -5,8 +5,7 @@
   <meta charset="UTF-8">
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.224.1.min.js"></script>
   <script src="https://connect.facebook.net/en_US/sdk.js"></script>
-  <!-- <script src="FacebookSDK.js"></script> -->
-  <script src="utils.js"></script>
+  <script src="FBUtils.js"></script>
   <script type="text/javascript" src="apiGateway-js-sdk/lib/axios/dist/axios.standalone.js"></script>
   <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
   <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/sha256.js"></script>
@@ -24,13 +23,10 @@
 
   <script>
 
-    userInfo = initFB(function (userInfo) {
-      console.log("User info:" + userInfo);
-    }
-    );
-
-
-
+    initFB.then(function(userInfo) {
+      console.log("Welcome " + userInfo.name + " !");
+      console.log(userInfo)
+    })
 
 
 
