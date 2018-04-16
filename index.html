@@ -6,6 +6,7 @@
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.224.1.min.js"></script>
   <script src="https://connect.facebook.net/en_US/sdk.js"></script>
   <script src="FBUtils.js"></script>
+  <script src="CognitoUtils.js"></script>
   <script type="text/javascript" src="apiGateway-js-sdk/lib/axios/dist/axios.standalone.js"></script>
   <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
   <script type="text/javascript" src="apiGateway-js-sdk/lib/CryptoJS/rollups/sha256.js"></script>
@@ -23,62 +24,25 @@
 
   <script>
 
-    initFB.then(function (userInfo) {
+    initFB().then(function (userInfo) {
       console.log("Welcome " + userInfo.name + " !");
-      console.log(userInfo)
 
-      AWS.config.region = 'eu-west-1';
+      getCognitoCredential(userInfo.accessToken).then(function (credential) {
 
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'eu-west-1:d8d70349-d70e-4d7d-bd25-98e2dcaa5399',
-        Logins: { 'graph.facebook.com': userInfo.accessToken }
+        var apigClient = apigClientFactory.newClient({
+          accessKey: credential.accessKeyId,
+          secretKey: credential.secretAccessKey,
+          sessionToken: credential.sessionToken,
+          region: 'eu-west-1'
+        });
+
+        apigClient.listGet().then(result => {
+          console.log("Fetched:", result);
+        });
+
       });
-
-
-      AWS.config.credentials.get(function (err) {
-        if (err) return console.log("Error", err);
-        console.log("Credentials:", AWS.config.credentials)
-      });
-
-
-
-      /* var cred = AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'eu-west-1:d8d70349-d70e-4d7d-bd25-98e2dcaa5399',
-        Logins: { 'graph.facebook.com': userInfo.accessToken }
-      });
-
-      console.log(cred); */
-
-
-
-
-
 
     })
-
-
-
-
-
-    var apigClient = apigClientFactory.newClient();
-
-    /* apigClient.listGet().then(result => {
-      console.log(result);
-      console.log(result.data.entries);
-    }); */
-
-    /* const listEndpoint = 'https://23nl4cqj97.execute-api.eu-west-1.amazonaws.com/prod/list';
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", listEndpoint, false);    
-    //xhr.setRequestHeader("X-API-KEY", "U1Y4HiILwdanNkBB1oRF87oOcJfrqKnqaxnfQXqQ");    
-    xhr.send();
-
-    var json = JSON.parse(xhr.responseText);
-
-    console.log(json); */
-
-
 
   </script>
 
